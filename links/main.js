@@ -16,6 +16,13 @@ const map = [
     "WWWWWWWWWWWWWWWWWWWWW",
 ];
 
+const directions = {
+    ArrowUp: () => move(-1, +0),
+    ArrowRight: () => move(+0, +1),
+    ArrowDown: () => move(+1, +0),
+    ArrowLeft: () => move(+0, -1)
+}
+
 let characterY = 9
 let characterX = 0
 
@@ -46,7 +53,7 @@ function createColumn (column) {
     destination.appendChild(newCell)
 }
 
-// add character to start position
+// creates the character
 function createCharacter () {
     let newCharacter = document.createElement('div')
     newCharacter.id = 'character'
@@ -54,24 +61,18 @@ function createCharacter () {
     const start = document.querySelector('.start')
     start.appendChild(newCharacter)
 
-    document.addEventListener('keydown', moveCharacter)
+    document.addEventListener('keydown', event => directions[event.key]());
 }
 
-// move your character
-function moveCharacter (e) {
-    const keyName = event.key;
+// moves the character
+function move (row, column) {
     const character = document.querySelector('#character')
-
-    if (keyName == 'ArrowUp' && map[characterY-1][characterX]===' ') {
-        characterY-=1
-    } else if (keyName == 'ArrowRight' && map[characterY][characterX+1]=== ' ' || map[characterY][characterX+1]=='F') {
-        characterX+=1
-    } else if (keyName == 'ArrowDown' && map[characterY+1][characterX]===' ') {
-        characterY+=1
-    } else if (keyName == 'ArrowLeft' && map[characterY][characterX-1]===' ') {
-        characterX-=1
+    const nextSpot = map[characterY+row][characterX+column]
+    console.log(characterY, characterX, row,column)
+    if(nextSpot === ' ' || nextSpot === 'F') {
+        characterY+=row
+        characterX+=column
     }
-
     const newPos = document.getElementById(`[${characterY}][${characterX}]`)
     newPos.appendChild(character)
     if (newPos.className == 'finish') youWon()
@@ -82,9 +83,7 @@ function youWon() {
     win.style.display = 'block'
     start.innerHTML = 'Try Again'
     start.style.display = 'block'
-    characterX=0
-    characterY=9
-    document.removeEventListener('keydown', moveCharacter)
+    document.removeEventListener('keydown', event => directions[event.key]());
 }
 
 // builds maze when start button is clicked
@@ -92,6 +91,8 @@ const createMaze = function () {
     destination.innerHTML = ''
     start.style.display = 'none'
     win.style.display = 'none'
+    characterX=0
+    characterY=9
 
     const maze = document.querySelector('#maze-wrap')
 
