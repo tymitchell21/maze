@@ -61,14 +61,18 @@ function createCharacter () {
     const start = document.querySelector('.start')
     start.appendChild(newCharacter)
 
-    document.addEventListener('keydown', event => directions[event.key]());
+    document.addEventListener('keydown', dir)
+}
+
+// calls directions
+function dir (event) {
+    directions[event.key]();
 }
 
 // moves the character
 function move (row, column) {
     const character = document.querySelector('#character')
     const nextSpot = map[characterY+row][characterX+column]
-    console.log(characterY, characterX, row,column)
     if(nextSpot === ' ' || nextSpot === 'F') {
         characterY+=row
         characterX+=column
@@ -83,7 +87,7 @@ function youWon() {
     win.style.display = 'block'
     start.innerHTML = 'Try Again'
     start.style.display = 'block'
-    document.removeEventListener('keydown', event => directions[event.key]());
+    document.removeEventListener('keydown', dir);
 }
 
 // builds maze when start button is clicked
